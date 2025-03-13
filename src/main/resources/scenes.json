@@ -1,0 +1,48 @@
+[
+  {
+    "id": 0,
+    "description": "You wake up in the center of a tall grass field. Your head hurts, and you are sweating. In distance, you can see the smoke of chimneys. It appears to be a village.",
+    "options": [
+      {
+        "description": "Go to the village.",
+        "destinationScene": 1
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "description": "After some minutes walking, you enter a small village. The people are dressed in old, ordinary clothes, some carrying bread and wood. You see a few houses with business signs. One has a bread drawn on it, another an anvil, and a third has a flask.",
+    "options": [
+      {
+        "description": "Go to the bakery.",
+        "destinationScene": 2
+      },
+      {
+        "description": "Go to the blacksmith.",
+        "destinationScene": 3
+      },
+      {
+        "description": "Go to the apothecary.",
+        "destinationScene": 4
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "description": "Inside the small wooden house, you can see dozens of types of bread. A friendly woman with an apron smiles at you. 'Hello, traveler. Are you hungry?'",
+    "options": [
+      {
+        "description": "Buy some bread (1 gold).",
+        "destinationScene": 1,
+        "action": {
+          "operation": "CHANGE_GOLD",
+          "amount": -10
+        }
+      },
+      {
+        "description": "Go back to the entrance of the village.",
+        "destinationScene": 1
+      }
+    ]
+  }
+]
