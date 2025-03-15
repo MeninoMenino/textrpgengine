@@ -1,6 +1,5 @@
-import model.Option;
-import model.Player;
-import model.Scene;
+package model;
+
 import model.enums.JobEnum;
 import processor.ActionProcessor;
 import processor.SceneProcessor;
@@ -25,7 +24,7 @@ public class Game {
         //Scene init
         Scene actualScene = scenes.get(0);
         //Player init
-        Player player = new Player("Menino", 100, 20, JobEnum.WARRIOR, 100);
+        player = new Player("Menino", 100, 20, JobEnum.WARRIOR, 100);
 
         while(actualScene != null) {
             //Player stats (at the top of every scene)
