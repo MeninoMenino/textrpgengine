@@ -2,6 +2,7 @@ package model;
 
 import model.enums.JobEnum;
 import processor.ActionProcessor;
+import processor.SaveLoadProcessor;
 import processor.SceneProcessor;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Scanner;
 public class Game {
 
     //---Processors---
+    SaveLoadProcessor saveLoadProcessor = new SaveLoadProcessor();
     SceneProcessor sceneProcessor = new SceneProcessor();
     Map<Integer, Scene> scenes = sceneProcessor.processScenes();
 
