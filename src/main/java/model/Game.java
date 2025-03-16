@@ -2,12 +2,12 @@ package model;
 
 import model.enums.JobEnum;
 import processor.ActionProcessor;
+import processor.IOProcessor;
 import processor.SaveLoadProcessor;
 import processor.SceneProcessor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Game {
 
@@ -15,9 +15,6 @@ public class Game {
     SaveLoadProcessor saveLoadProcessor = new SaveLoadProcessor();
     SceneProcessor sceneProcessor = new SceneProcessor();
     Map<Integer, Scene> scenes = sceneProcessor.processScenes();
-
-    //Input scanner
-    Scanner scanner = new Scanner(System.in);
 
     //Player
     Player player;
@@ -40,7 +37,7 @@ public class Game {
             printOptions(options);
 
             //Get player choice
-            short input = scanner.nextShort();
+            short input = IOProcessor.readOption();
 
             //Validate option
             if(options.size() < input) {
@@ -56,6 +53,9 @@ public class Game {
             }
 
             actualScene = scenes.get(selectedOption.getDestinationScene());
+
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
         }
 
         System.out.println("Finish");

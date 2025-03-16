@@ -8,7 +8,7 @@ import model.Player;
 @Getter
 public enum OperationEnum {
 
-    CHANGE_HP {
+    CHANGE_HP{
         @Override
         public void execute(Player player, Integer amount) {
             player.setHp(Integer.sum(player.getHp(), amount));

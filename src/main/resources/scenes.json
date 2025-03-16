@@ -32,7 +32,7 @@
     "description": "Inside the small wooden house, you can see dozens of types of bread. A friendly woman with an apron smiles at you. 'Hello, traveler. Are you hungry?'",
     "options": [
       {
-        "description": "Buy some bread (1 gold).",
+        "description": "Buy some bread (10 gold).",
         "destinationScene": 1,
         "action": {
           "operation": "CHANGE_GOLD",
