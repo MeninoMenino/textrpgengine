@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import model.Player;
 import model.SaveState;
 import model.enums.JobEnum;
+import model.enums.MessageEnum;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,7 +28,7 @@ public class SaveLoadProcessor {
     }
 
     public void saveGame(Player player, Integer actualScene) {
-        System.out.println("Create a new save game or overwrite: ");
+        IOProcessor.write(MessageEnum.CHOOSE_SAVE);
 
         List<String> files = listFiles();
 
@@ -41,14 +42,14 @@ public class SaveLoadProcessor {
 
         //Validate option
         if(files.size() < selectedOption) {
-            System.out.println("Invalid option!");
+            IOProcessor.write(MessageEnum.INVALID_OPTION);
         } else if (selectedOption == 0) {
-            System.out.println("Name your save file: ");
+            IOProcessor.write(MessageEnum.NAME_SAVE_FILE);
             String filename = IOProcessor.readFilename();
 
             saveToFile(filename);
         } else {
-            System.out.println("Are you sure? (y/n)");
+            IOProcessor.write(MessageEnum.ARE_YOU_SURE);
             if(IOProcessor.readYesOrNo()){
                 saveToFile(files.get(selectedOption));
             }
@@ -69,9 +70,9 @@ public class SaveLoadProcessor {
             writer.write(new Gson().toJson(saveState));
             writer.close();
 
-            System.out.println("Saved successfully.");
+            IOProcessor.write(MessageEnum.SAVED_SUCCESSFULLY);
         } catch (IOException exception) {
-            System.out.println("Save failed.");
+            IOProcessor.write(MessageEnum.SAVE_FAILED);
         }
     }
 
@@ -98,10 +99,10 @@ public class SaveLoadProcessor {
 
                 return files;
             } else {
-                System.out.println("There is no save files!");
+                IOProcessor.write(MessageEnum.NO_SAVE_FILES);
             }
         } else {
-            System.out.println("Error listing save files!");
+            IOProcessor.write(MessageEnum.ERROR_LISTING_SAVE_FILES);
         }
 
         return new ArrayList<>();

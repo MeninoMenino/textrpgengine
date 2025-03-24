@@ -1,6 +1,7 @@
 package model;
 
 import model.enums.JobEnum;
+import model.enums.MessageEnum;
 import processor.ActionProcessor;
 import processor.IOProcessor;
 import processor.SaveLoadProcessor;
@@ -27,21 +28,22 @@ public class Game {
 
         while(actualScene != null) {
             //Player stats (at the top of every scene)
-            printPlayerStats();
+            IOProcessor.printPlayerStats(player);
 
-            System.out.println(actualScene.getDescription() + "\n");
+            //Scene description
+            IOProcessor.write(actualScene.getDescription() + "\n");
 
             List<Option> options = actualScene.getOptions();
 
             //Show scene options
-            printOptions(options);
+            IOProcessor.printOptions(options);
 
             //Get player choice
             short input = IOProcessor.readOption();
 
             //Validate option
             if(options.size() < input) {
-                System.out.println("Invalid option!");
+                IOProcessor.write(MessageEnum.INVALID_OPTION);
                 continue;
             }
 
@@ -60,23 +62,6 @@ public class Game {
 
         System.out.println("Finish");
 
-    }
-
-    private void printPlayerStats() {
-        System.out.println("| Name: " + player.getName() +
-                "  --  HP: " + player.getHp() +
-                "  --  MP: " + player.getMp() +
-                "  --  Class: " + player.getJob().getJobName() +
-                "  --  Gold: " + player.getGold() +
-                " |\n");
-    }
-
-    private void printOptions(List<Option> options) {
-        int optCount = 1;
-        for(Option option : options) {
-            System.out.println(optCount + " - " + option.getDescription());
-            optCount++;
-        }
     }
 
 }
