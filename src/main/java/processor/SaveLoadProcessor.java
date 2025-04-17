@@ -27,10 +27,11 @@ public class SaveLoadProcessor {
         new File(SAVEFILE_PATH).mkdirs();
     }
 
+    //Save game state
     public void saveGame(Player player, Integer actualScene) {
-        IOProcessor.write(MessageEnum.CHOOSE_SAVE);
+        IOProcessor.write(MessageEnum.CREATE_SAVE_OR_OVERWRITE);
 
-        List<String> files = listFiles();
+        List<String> files = listFiles(MessageEnum.SAVE_OPTION.getMessage());
 
         saveState = SaveState.builder()
                 .actualScene(actualScene)
@@ -57,8 +58,37 @@ public class SaveLoadProcessor {
 
     }
 
-    //Save game state
-    public void saveToFile(String filename) {
+    //List save files
+    private List<String> listFiles(String optionZero) {
+        File directory = new File(SAVEFILE_PATH);
+
+        if (directory.exists() && directory.isDirectory()) {
+            String[] filesArray = directory.list();
+
+            if(filesArray != null) {
+                List<String> files = new ArrayList<>(Arrays.asList(filesArray));
+
+                if(optionZero != null && !optionZero.isEmpty()) {
+                    Collections.sort(files);
+                    files.addFirst(optionZero);
+                }
+
+                for (int i = 0; i < files.size(); i++) {
+                    IOProcessor.write((i) + " - " + files.get(i));
+                }
+
+                return files;
+            } else {
+                IOProcessor.write(MessageEnum.NO_SAVE_FILES);
+            }
+        } else {
+            IOProcessor.write(MessageEnum.ERROR_LISTING_SAVE_FILES);
+        }
+
+        return new ArrayList<>();
+    }
+
+    private void saveToFile(String filename) {
         try {
             File saveFile = new File(buildSavePath(filename));
 
@@ -76,38 +106,6 @@ public class SaveLoadProcessor {
         }
     }
 
-    //Load game state
-    public void loadGame() {
-        listFiles();
-    }
-
-    //List save files
-    private List<String> listFiles() {
-        File directory = new File(SAVEFILE_PATH);
-
-        if (directory.exists() && directory.isDirectory()) {
-            String[] filesArray = directory.list();
-
-            if(filesArray != null) {
-                List<String> files = new ArrayList<>(Arrays.asList(filesArray));
-                Collections.sort(files);
-                files.addFirst("Create new file");
-
-                for (int i = 0; i < files.size(); i++) {
-                    System.out.println((i) + " - " + files.get(i));
-                }
-
-                return files;
-            } else {
-                IOProcessor.write(MessageEnum.NO_SAVE_FILES);
-            }
-        } else {
-            IOProcessor.write(MessageEnum.ERROR_LISTING_SAVE_FILES);
-        }
-
-        return new ArrayList<>();
-    }
-
     private String buildSavePath(String filename) {
         String txtExtension = ".txt";
 
@@ -116,9 +114,20 @@ public class SaveLoadProcessor {
         return SAVEFILE_PATH + "/" + timestamp + " " + filename + txtExtension;
     }
 
-    public static void main(String[] args) {
-        Player player = new Player("Menino", 100, 20, JobEnum.MAGE, 100);
+    //Load game state
+    public void loadGame() {
+        IOProcessor.write(MessageEnum.CHOOSE_FILE);
 
-        new SaveLoadProcessor().saveGame(player, 2);
+        List<String> files = listFiles(null);
+
+        IOProcessor.readOption();
+    }
+
+    public static void main(String[] args) {
+        //Player player = new Player("Menino", 100, 20, JobEnum.MAGE, 100);
+
+        //new SaveLoadProcessor().saveGame(player, 2);
+
+        new SaveLoadProcessor().loadGame();
     }
 }
