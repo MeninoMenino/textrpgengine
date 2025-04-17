@@ -3,22 +3,18 @@ package processor;
 import com.google.gson.Gson;
 import model.Player;
 import model.SaveState;
-import model.enums.JobEnum;
 import model.enums.MessageEnum;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SaveLoadProcessor {
 
-    private final String SAVEFILE_PATH = "savefiles";
+    private final String SAVEFILE_PATH = "savefiles/";
 
     private SaveState saveState;
 
@@ -58,7 +54,59 @@ public class SaveLoadProcessor {
 
     }
 
-    //List save files
+    private void saveToFile(String filename) {
+        try {
+            File saveFile = new File(buildPath(filename));
+
+            if (!saveFile.exists()) {
+                saveFile.createNewFile();
+            }
+
+            FileWriter writer = new FileWriter(saveFile, false);
+            writer.write(new Gson().toJson(saveState));
+            writer.close();
+
+            IOProcessor.write(MessageEnum.SAVED_SUCCESSFULLY);
+        } catch (IOException exception) {
+            IOProcessor.write(MessageEnum.SAVE_FAILED);
+        }
+    }
+
+    //Load game state
+    public SaveState loadGame() {
+        IOProcessor.write(MessageEnum.CHOOSE_FILE);
+
+        List<String> files = listFiles(null);
+
+        //TODO: validar escolha
+        short selectedOption = IOProcessor.readOption();
+
+        //Validate option
+        if(files.size() < selectedOption) {
+            IOProcessor.write(MessageEnum.INVALID_OPTION);
+        } else {
+            IOProcessor.write(MessageEnum.ARE_YOU_SURE);
+            if(IOProcessor.readYesOrNo()){
+                String fileContent = loadFromFile(files.get(selectedOption));
+
+                return new Gson().fromJson(fileContent, SaveState.class);
+            }
+        }
+
+        return null;
+    }
+
+    private String loadFromFile(String selectedOption) {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(SAVEFILE_PATH + selectedOption));
+            return String.join("\n", lines);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //General functions
+
     private List<String> listFiles(String optionZero) {
         File directory = new File(SAVEFILE_PATH);
 
@@ -88,39 +136,12 @@ public class SaveLoadProcessor {
         return new ArrayList<>();
     }
 
-    private void saveToFile(String filename) {
-        try {
-            File saveFile = new File(buildSavePath(filename));
-
-            if (!saveFile.exists()) {
-                saveFile.createNewFile();
-            }
-
-            FileWriter writer = new FileWriter(saveFile, false);
-            writer.write(new Gson().toJson(saveState));
-            writer.close();
-
-            IOProcessor.write(MessageEnum.SAVED_SUCCESSFULLY);
-        } catch (IOException exception) {
-            IOProcessor.write(MessageEnum.SAVE_FAILED);
-        }
-    }
-
-    private String buildSavePath(String filename) {
+    private String buildPath(String filename) {
         String txtExtension = ".txt";
 
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy-HH-mm-ss"));
 
-        return SAVEFILE_PATH + "/" + timestamp + " " + filename + txtExtension;
-    }
-
-    //Load game state
-    public void loadGame() {
-        IOProcessor.write(MessageEnum.CHOOSE_FILE);
-
-        List<String> files = listFiles(null);
-
-        IOProcessor.readOption();
+        return SAVEFILE_PATH + timestamp + " " + filename + txtExtension;
     }
 
     public static void main(String[] args) {
@@ -128,6 +149,9 @@ public class SaveLoadProcessor {
 
         //new SaveLoadProcessor().saveGame(player, 2);
 
-        new SaveLoadProcessor().loadGame();
+        SaveState stt = new SaveLoadProcessor().loadGame();
+
+        System.out.println(stt.getPlayer().getName());
+        System.out.println("Scene: " + stt.getActualScene());
     }
 }
